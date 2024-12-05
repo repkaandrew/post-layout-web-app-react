@@ -1,0 +1,143 @@
+header {
+  height: 64px;
+  background-color: black;
+  color: aliceblue;
+  display: flex;
+  vertical-align: center;
+}
+
+.title {
+  font-size: 1.5em;
+  width: 80vw;
+  margin: auto;
+}
+
+.main-container {
+  width: 80vw;
+  height: calc(100vh - 2em - 64px - 2em);
+  display: flex;
+  gap: 2em;
+  margin: 2em auto;
+  background-color: white;
+  border-radius: 4px;
+  position: relative;
+}
+
+.form-container {
+  padding: 1em;
+  flex-basis: 40%;
+
+  .form-input {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+
+    .default-input {
+      width: 200px;
+
+      &:focus {
+        box-shadow: none;
+        border-color: dimgrey;
+      }
+    }
+
+    select {
+      border: dimgrey solid 1px;
+      border-radius: 4px;
+      padding: 8px 4px;
+    }
+  }
+
+  .control-title {
+    white-space: nowrap;
+  }
+}
+
+.view-container {
+  flex-grow: 1;
+  border: lightgray solid 1px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.obstructions-array {
+  padding-left: 16px;
+}
+
+.obstructions-title__block {
+  display: flex;
+  justify-content: space-between;
+}
+
+.obstruction-btn {
+  border: darkgray solid 1px;
+  color: dimgrey;
+  border-radius: 4px;
+  min-width: 48px;
+  height: max-content;
+  padding: 4px;
+
+  &:hover {
+    border-color: dimgrey;
+  }
+}
+
+.obstruction-section {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px 0;
+  padding-left: 1rem;
+
+  .obstruction-group {
+    flex-basis: 75%;
+  }
+
+  .obstruction-btn {
+    align-self: flex-end;
+    margin-bottom: 4px;
+  }
+}
+
+.calculate-button {
+  margin-top: 16px;
+  width: 200px;
+  border-color: #dee2e6;
+}
+
+.btn:disabled {
+  pointer-events: auto;
+  cursor: not-allowed;
+}
+
+.options-selection-section {
+  position: absolute;
+  left: 45%;
+  top: 16px;
+  display: flex;
+  gap: 4px;
+
+  .btn {
+    height: 32px;
+    align-self: flex-start;
+  }
+}
+
+.layout-description {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #696969;
+
+  p {
+    margin-bottom: 2px;
+  }
+}
+
+#canvas-container {
+  height: 100%;
+  width: 100%;
+
+  & canvas {
+    overflow: hidden;
+    outline: none;
+  }
+}
