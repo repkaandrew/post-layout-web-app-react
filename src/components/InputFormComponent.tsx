@@ -111,7 +111,7 @@ const InputFormComponent: React.FC<InputFormProps> = ({onSubmit}) => {
                 <select
                   id={`obstruction-type-${idx}`}
                   {...register(`${CONTROLS.obstructions}.${idx}.${OBSTRUCTION_CONTROLS.type}`)}
-                  className="default-input">
+                  className="default-input form-select">
                   {OBSTRUCTION_OPTIONS.map(option => (
                     <option key={option.value} value={option.value}>
                       {option.name}

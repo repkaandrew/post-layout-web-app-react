@@ -1,27 +1,21 @@
-import {useState} from 'react'
+import {useContext} from 'react'
 import InputFormComponent from './components/InputFormComponent.tsx';
 import './App.css'
-import {ObstructionData, PostLayoutInput} from './models/post-layout-input.ts';
-import {PostLayoutOption} from './models/post-layout-option.ts';
+import {PostLayoutInput} from './models/post-layout-input.ts';
 import {calculatePostLayout} from './utils/api-utils.ts';
-import LayoutViewComponent from './components/LayoutViewComponent.tsx';
-
-interface RenderData {
-  obstructions: ObstructionData[];
-  layoutOptions: PostLayoutOption[];
-}
+import MainViewComponent from './components/MainViewComponent.tsx';
+import {ViewContext} from './context/ViewContext.ts';
 
 function App() {
-  const [renderData, setRenderData] = useState<RenderData>({
-    obstructions: [],
-    layoutOptions: []
-  })
+  const appCtx = useContext(ViewContext);
 
   const onInputSubmitted = async (input: PostLayoutInput) => {
     const calcRes = await calculatePostLayout(input);
-    setRenderData({
+
+    appCtx.refreshState({
+      postSize: input.postSize,
       obstructions: input.obstructions,
-      layoutOptions: calcRes
+      options: calcRes
     });
   }
 
@@ -32,7 +26,7 @@ function App() {
       </header>
       <main className={"main-container"}>
         <InputFormComponent onSubmit={onInputSubmitted}/>
-        <LayoutViewComponent {...renderData}/>
+        <MainViewComponent/>
       </main>
     </>
   )

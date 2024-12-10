@@ -109,9 +109,14 @@ header {
   cursor: not-allowed;
 }
 
-.options-selection-section {
+.view-service-container {
   position: absolute;
-  left: 45%;
+  left: 40%;
+  top: 16px;
+  display: flex;
+}
+
+.options-selection-section {
   top: 16px;
   display: flex;
   gap: 4px;
@@ -123,7 +128,7 @@ header {
 }
 
 .layout-description {
-  margin-left: 8px;
+  margin-left: 24px;
   font-size: 12px;
   color: #696969;
 
@@ -133,6 +138,9 @@ header {
 }
 
 #canvas-container {
+  outline: none;
+  border: lightgray solid 2px;
+  border-radius: 4px;
   height: 100%;
   width: 100%;
 

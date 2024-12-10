@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {PostLayoutOption} from '../models/post-layout-option.ts';
 import {ObstructionData, ObstructionType} from '../models/post-layout-input.ts';
 import * as THREE from 'three';
@@ -6,7 +6,8 @@ import {Color, Object3D} from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 
 interface LayoutViewProps {
-  layoutOptions: PostLayoutOption[];
+  postSize?: number;
+  option?: PostLayoutOption;
   obstructions: ObstructionData[];
 }
 
@@ -16,13 +17,12 @@ const obstructionColor: { [key in ObstructionType]: Color } = {
   [ObstructionType.MUST_AVOID]: new Color('#990000')
 }
 
-const LayoutViewComponent: React.FC<LayoutViewProps> = ({layoutOptions, obstructions}) => {
-  const [selectedOptionIdx, setSelectedOptionIdx] = useState(0);
-  const canvasRef = useRef(null);
+const PostsLayoutViewComponent: React.FC<LayoutViewProps> = ({postSize, option, obstructions}) => {
+  const canvasRef = useRef<HTMLDivElement>();
   const {current: root} = useRef(new Object3D());
   const {current: scene} = useRef(new THREE.Scene());
-  const {current: camera} = useRef(new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000));
   const {current: engine} = useRef(new THREE.WebGLRenderer());
+  const {current: camera} = useRef(new THREE.PerspectiveCamera(60, 1, 0.1, 5000));
 
   const canvas = engine.domElement;
 
@@ -32,7 +32,7 @@ const LayoutViewComponent: React.FC<LayoutViewProps> = ({layoutOptions, obstruct
     engine.setSize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
     engine.localClippingEnabled = true;
     engine.shadowMap.enabled = false;
-    engine.setClearColor(0xffffff);
+    engine.setClearColor('#ffffff');
 
     canvasRef.current.appendChild(canvas);
 
@@ -46,17 +46,17 @@ const LayoutViewComponent: React.FC<LayoutViewProps> = ({layoutOptions, obstruct
     cameraControls.target.copy(lookAt);
     cameraControls.update();
 
-    scene.add(new THREE.AxesHelper(500));
-    scene.add(new THREE.CameraHelper(camera));
+    if (import.meta.env.DEV) {
+      scene.add(new THREE.AxesHelper(500));
+      scene.add(new THREE.CameraHelper(camera));
+    }
 
     // init lights
-    const light = new THREE.PointLight('#ffffff', 1);
-    scene.add(light);
-    light.position.set(0, 0, 900);
+    scene.add(new THREE.AmbientLight('#404040'));
 
     // add ground
     const geometry = new THREE.PlaneGeometry(10000, 500);
-    const material = new THREE.MeshBasicMaterial({color: '#78b464', side: THREE.DoubleSide});
+    const material = new THREE.MeshBasicMaterial({color: '#527746', side: THREE.DoubleSide});
     const plane = new THREE.Mesh(geometry, material);
     plane.rotation.x = Math.PI / 2;
     scene.add(plane);
@@ -75,24 +75,20 @@ const LayoutViewComponent: React.FC<LayoutViewProps> = ({layoutOptions, obstruct
   useEffect(() => {
     disposeScene();
     assembleScene();
-  }, [selectedOptionIdx, layoutOptions, obstructions]);
-
-  const selectedOption = layoutOptions[selectedOptionIdx];
-  const isPreviousOptionAvailable = selectedOptionIdx > 0;
-  const isNextOptionAvailable = selectedOptionIdx < layoutOptions.length - 1;
+  }, [option, obstructions]);
 
   const addPost = useCallback(
     (position: number, size: number, index: number): void => {
-    const geometry = new THREE.BoxGeometry(size, 48, size, 100, 100, 100);
-    const material = new THREE.MeshPhongMaterial({color: '#59473d'});
-    const post = new THREE.Mesh(geometry, material);
+      const geometry = new THREE.BoxGeometry(size, 48, size, 100, 100, 100);
+      const material = new THREE.MeshPhongMaterial({color: '#4b3f3c'});
+      const post = new THREE.Mesh(geometry, material);
 
-    post.position.x = position;
-    post.position.y = 24;
-    post.name = `post-${index + 1}`;
+      post.position.x = position;
+      post.position.y = 24;
+      post.name = `post-${index + 1}`;
 
-    root.add(post);
-  },
+      root.add(post);
+    },
     [root]
   );
 
@@ -112,7 +108,7 @@ const LayoutViewComponent: React.FC<LayoutViewProps> = ({layoutOptions, obstruct
   );
 
   const assembleScene = (): void => {
-    selectedOption?.postLocations.forEach((location, i) => addPost(location, 3.5, i));
+    option?.postLocations.forEach((location, i) => addPost(location, postSize, i));
     obstructions?.forEach((obstruction, i) => addObstruction(obstruction.location, obstruction.size, obstruction.type, i))
   }
 
@@ -142,22 +138,8 @@ const LayoutViewComponent: React.FC<LayoutViewProps> = ({layoutOptions, obstruct
   );
 
   return (
-    <>
-      <div className="options-selection-section">
-        <button className="btn btn-light"
-                disabled={!isPreviousOptionAvailable}
-                onClick={() => setSelectedOptionIdx(selectedOptionIdx - 1)}>
-          <span>&lArr;</span>
-        </button>
-        <button className="btn btn-light"
-                disabled={!isNextOptionAvailable}
-                onClick={() => setSelectedOptionIdx(selectedOptionIdx + 1)}>
-          <span>&rArr;</span>
-        </button>
-      </div>
-      <div id="canvas-container" ref={canvasRef}></div>
-    </>
+    <div id="canvas-container" ref={canvasRef}></div>
   );
 }
 
-export default LayoutViewComponent;
+export default PostsLayoutViewComponent;

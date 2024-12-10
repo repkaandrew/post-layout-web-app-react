@@ -1,11 +1,12 @@
 {
-  "name": "test-project",
+  "name": "post-layout-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "vite --mode development",
+    "build": "tsc -b && vite build --mode development",
+    "buildProd": "tsc -b && vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview"
   },
